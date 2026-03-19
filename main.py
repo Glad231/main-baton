@@ -4,17 +4,22 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Messa
 TOKEN = "8784344056:AAGDeL1uFYl6ozfb9kke5blB7y9Tsb28pVo"
 ADMIN_ID = 1076952379
 
-def save_user(user_id):
+def save_user(user): 
+    user_id = user.id
+    username = user.username if user.username else "no_username"
+
     try:
         with open("users.txt", "r") as f:
             users = f.read().splitlines()
     except:
         users = []
 
-    if str(user_id) not in users:
-        with open("users.txt", "a") as f:
-            f.write(str(user_id) + "\n")
+    user_line = f"{user_id}|{username}"
 
+    if not any(str(user_id) in u for u in users):
+        with open("users.txt", "r") as f:
+            f.write(user_line + "\n")
+            
 def get_users():
     try:
         with open("users.txt", "r") as f:
