@@ -138,7 +138,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["broadcast"] = False
         await update.message.reply_text(f"✅ Отправлено: {success}")
 
-elif text == "🔙 Назад":
+    elif text == "🔙 Назад":
         await update.message.reply_text(
             "Главное меню 👇",
             reply_markup=get_main_keyboard(user_id)
