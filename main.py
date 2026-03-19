@@ -4,7 +4,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Messa
 TOKEN = "8784344056:AAGDeL1uFYl6ozfb9kke5blB7y9Tsb28pVo"
 ADMIN_ID = 1076952379
 
-def save_user(user): 
+
+def save_user(user):
     user_id = user.id
     username = user.username if user.username else "no_username"
 
@@ -16,10 +17,11 @@ def save_user(user):
 
     user_line = f"{user_id}|{username}"
 
-    if not any(str(user_id) in u for u in users):
-        with open("users.txt", "r") as f:
+    if not any(user_line == u for u in users):
+        with open("users.txt", "a") as f:
             f.write(user_line + "\n")
-            
+
+
 def get_users():
     try:
         with open("users.txt", "r") as f:
@@ -41,6 +43,7 @@ def get_main_keyboard(user_id):
 
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+
 def get_admin_keyboard():
     keyboard = [
         ["📊 Статистика", "📋 Пользователи"],
@@ -49,14 +52,18 @@ def get_admin_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    save_user(user_id)
+    user = update.effective_user
+    user_id = user.id
+
+    save_user(user)
 
     await update.message.reply_text(
         "Привет, выбери 👇",
         reply_markup=get_main_keyboard(user_id)
     )
+
 
 async def send_video(update, context, filename):
     await context.bot.send_video(
@@ -64,11 +71,13 @@ async def send_video(update, context, filename):
         video=open(filename, "rb")
     )
 
+
 async def send_photo(update, context, filename):
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=open(filename, "rb")
     )
+
 
 async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
@@ -92,7 +101,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text == "ℹ️ О боте":
         await update.message.reply_text("Бот с видео 🎬")
 
- 
+    # ===== АДМИНКА =====
     elif text == "⚙️ Админ панель" and user_id == ADMIN_ID:
         await update.message.reply_text(
             "👑 Админ панель",
@@ -112,18 +121,24 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["broadcast"] = True
         await update.message.reply_text("✍️ Напиши сообщение для рассылки:")
 
+ 
     elif context.user_data.get("broadcast") and user_id == ADMIN_ID:
         users = get_users()
+
+        success = 0
+
         for user in users:
             try:
-                await context.bot.send_message(chat_id=user, text=text)
+                user_id = int(user.split("|")[0])
+                await context.bot.send_message(chat_id=user_id, text=text)
+                success += 1
             except:
                 pass
 
         context.user_data["broadcast"] = False
-        await update.message.reply_text("✅ Рассылка отправлена")
+        await update.message.reply_text(f"✅ Отправлено: {success}")
 
-    elif text == "🔙 Назад":
+elif text == "🔙 Назад":
         await update.message.reply_text(
             "Главное меню 👇",
             reply_markup=get_main_keyboard(user_id)
@@ -131,6 +146,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     else:
         await update.message.reply_text("Выбери кнопку 👇")
+
 
 app = ApplicationBuilder().token(TOKEN).build()
 
