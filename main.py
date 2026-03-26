@@ -99,7 +99,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_photo(update, context, "photo2.jpg")
 
     elif text == "ℹ️ О боте":
-        await update.message.reply_text("Бот с видео 🎬")
+        await update.message.reply_text("Бот с видео, проэкт начинающего програмиста с Сиряков ;) 🎬")
 
     # ===== АДМИНКА =====
     elif text == "⚙️ Админ панель" and user_id == ADMIN_ID:
