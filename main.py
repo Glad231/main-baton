@@ -98,10 +98,8 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"👥 Пользователей: {len(users)}")
     elif text == "📋 Пользователи" and user_id == ADMIN_ID:
         users = get_users()
-        text_users = "
-".join(users)
-        await update.message.reply_text(f"📋 Список:
-{text_users}")
+        text_users = "\n".join(users)
+        await update.message.reply_text(f"📋 Список:\n{text_users}")
     elif text == "📢 Рассылка" and user_id == ADMIN_ID:
         context.user_data["broadcast"] = True
         await update.message.reply_text("✍️ Напиши сообщение для рассылки:")
