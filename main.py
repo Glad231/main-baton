@@ -22,7 +22,7 @@ def save_user(user):
     user_line = f"{user_id}|{username}"
     if not any(user_line == u for u in users):
         with open("users.txt", "a") as f:
-            f.write(user_line + "
+            f.write(user_line + "\n")
 ")
 
 def get_users():
